@@ -10,6 +10,14 @@ from streamlit_option_menu import option_menu # pip install streamlit-option-men
 import main_plot
 import main_plot2
 
+st.write(dir(main_plot))  # List all attributes of main_plot
+
+if hasattr(main_plot, 'min_times_sorted'):
+    st.write("min_times_sorted exists")
+    st.write(main_plot.min_times_sorted)
+else:
+    st.write("min_times_sorted does not exist")
+
 class StyleFunction: # wut
     def __init__(self, color):
         self.color = color
