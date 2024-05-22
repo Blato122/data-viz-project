@@ -90,6 +90,7 @@ if resume:
     except FileNotFoundError:
         print('File does not exist (yet)')
         mun_hospital_times = {}
+    st.write(mun_hospital_times)
 else:
     st.write("???")
     mun_hospital_times = {}
