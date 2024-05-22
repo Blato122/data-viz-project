@@ -10,14 +10,6 @@ from streamlit_option_menu import option_menu # pip install streamlit-option-men
 import main_plot
 import main_plot2
 
-st.write(dir(main_plot))  # List all attributes of main_plot
-
-if hasattr(main_plot, 'min_times_sorted'):
-    st.write("min_times_sorted exists")
-    st.write(main_plot.min_times_sorted)
-else:
-    st.write("min_times_sorted does not exist")
-
 class StyleFunction: # wut
     def __init__(self, color):
         self.color = color
@@ -26,7 +18,8 @@ class StyleFunction: # wut
         return {'fillColor': self.color, 'color': 'black', 'weight': 0.5, 'fillOpacity': 0.7}
 
 # @st.cache_data
-def create_interactive_map(file):
+def create_interactive_map(two):
+    file = main_plot2 if two else main_plot
     m = folium.Map( # unhardcodify!!!
         location=[52.0693, 19.4803], # piątek dodać
         zoom_start=6,  # center on Poland
@@ -48,7 +41,8 @@ def create_interactive_map(file):
     return m
 
 # @st.cache_data # tutaj chyba lepiej trzymać jak najmniej rzeczy..?
-def create_static_map(file):
+def create_static_map(two):
+    file = main_plot2 if two else main_plot
     # Plot the contours (filled with color) and health facility locations
     fig, ax = plt.subplots(figsize=(10, 10))
     file.municipalities.plot(ax=ax, edgecolor='grey', facecolor=[file.color_mapping[(tuple(c), n)] for c, n in file.municipality_dict.items()], linewidth=0.25)
@@ -87,7 +81,8 @@ def create_static_map(file):
     # st.image('svg_plot.svg')
 
 # @st.cache_data
-def create_statistics_plot(file):
+def create_statistics_plot(two):
+    file = main_plot2 if two else main_plot
     top_municipalities = [mun_name for (_, mun_name), _ in file.min_times_sorted[:20]]
     top_min_times_in_minutes = [time[1] for _, time in file.min_times_sorted[:20]]
     top_hospital_names = [time[0] for _, time in file.min_times_sorted[:20]]
@@ -185,13 +180,13 @@ def create_statistics_plot(file):
 # Create the maps beforehand (much faster than @st.cache_data...)
 # BARDZO DŁUGO SIĘ PRZEZ TO ŁADUJE CHYBA!
 # DZIAŁA, ALE jak to wygląda... no cóż, musiało działać na szybko
-static = create_static_map(main_plot)
-interactive = create_interactive_map(main_plot)
-statistics = create_statistics_plot(main_plot)
+static = create_static_map(False)
+interactive = create_interactive_map(False)
+statistics = create_statistics_plot(False)
 
-static2 = create_static_map(main_plot2)
-interactive2 = create_interactive_map(main_plot2)
-statistics2 = create_statistics_plot(main_plot2)
+static2 = create_static_map(True)
+interactive2 = create_interactive_map(True)
+statistics2 = create_statistics_plot(True)
 
 # Sidebar menu:
 with st.sidebar:
