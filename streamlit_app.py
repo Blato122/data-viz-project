@@ -391,7 +391,7 @@ with st.sidebar:
 #     # st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
 #     st.pyplot(statistics)
 
-elif selected == "Mapa statyczna - powiaty":
+if selected == "Mapa statyczna - powiaty":
     st.header("Najbliższe szpitale od centrum danego powiatu", divider='rainbow')
     st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
     st.pyplot(static2)
