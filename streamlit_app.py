@@ -10,6 +10,22 @@ from streamlit_option_menu import option_menu # pip install streamlit-option-men
 import main_plot
 import main_plot2
 
+st.write(dir(main_plot))  # List all attributes of main_plot
+
+if hasattr(main_plot, 'min_times_sorted'):
+    st.write("min_times_sorted exists")
+    st.write(main_plot.min_times_sorted)
+else:
+    st.write("min_times_sorted does not exist")
+
+st.write(dir(main_plot2))  # List all attributes of main_plot
+
+if hasattr(main_plot2, 'min_times_sorted'):
+    st.write("min_times_sorted exists")
+    st.write(main_plot2.min_times_sorted)
+else:
+    st.write("min_times_sorted does not exist")
+
 class StyleFunction: # wut
     def __init__(self, color):
         self.color = color
@@ -72,7 +88,7 @@ def create_static_map(file):
     cbar.set_ticklabels(tick_labels)
 
     plt.tight_layout()
-    plt.show()
+    # plt.show()
     # fig.show() - wrong! for some reason
     # st.pyplot(fig)
     return fig
@@ -175,6 +191,8 @@ def create_statistics_plot(file):
     return fig
 
 # Create the maps beforehand (much faster than @st.cache_data...)
+# BARDZO DŁUGO SIĘ PRZEZ TO ŁADUJE CHYBA!
+# DZIAŁA, ALE jak to wygląda... no cóż, musiało działać na szybko
 static = create_static_map(main_plot)
 interactive = create_interactive_map(main_plot)
 statistics = create_statistics_plot(main_plot)

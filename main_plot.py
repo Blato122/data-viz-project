@@ -11,7 +11,7 @@ import branca.colormap as cm # idk what's the difference tbh
 
 matrix_api_base_url = 'http://localhost:8080/ors/v2/matrix/driving-car'
 
-load_mun = False
+load_mun = True
 # omg ale syf, zmienić nazwę chociaż
 
 # Load the contours of Poland and its municipalities from a GeoJSON file
