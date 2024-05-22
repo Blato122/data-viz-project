@@ -16,7 +16,7 @@ class StyleFunction: # wut
     def __call__(self, feature):
         return {'fillColor': self.color, 'color': 'black', 'weight': 0.5, 'fillOpacity': 0.7}
 
-@st.cache_data
+# @st.cache_data
 def create_interactive_map():
     m = folium.Map( # unhardcodify!!!
         location=[52.0693, 19.4803], # piątek dodać
@@ -38,7 +38,7 @@ def create_interactive_map():
     m.add_child(main_plot.colormap)
     return m
 
-@st.cache_data # tutaj chyba lepiej trzymać jak najmniej rzeczy..?
+# @st.cache_data # tutaj chyba lepiej trzymać jak najmniej rzeczy..?
 def create_static_map():
     # Plot the contours (filled with color) and health facility locations
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -73,10 +73,11 @@ def create_static_map():
     plt.tight_layout()
     plt.show()
     # fig.show() - wrong! for some reason
-    st.pyplot(fig)
+    # st.pyplot(fig)
+    return fig
     # st.image('svg_plot.svg')
 
-@st.cache_data
+# @st.cache_data
 def create_statistics_plot():
     top_municipalities = [mun_name for (_, mun_name), _ in main_plot.min_times_sorted[:20]]
     top_min_times_in_minutes = [time[1] for _, time in main_plot.min_times_sorted[:20]]
@@ -169,7 +170,12 @@ def create_statistics_plot():
     ax3.set_xticks([], minor=True) # for minor ticks
 
     plt.tight_layout()
-    st.pyplot(fig)
+    # st.pyplot(fig)
+    return fig
+
+static = create_static_map()
+interactive = create_interactive_map()
+statistics = create_statistics_plot()
 
 # Sidebar menu:
 with st.sidebar:
@@ -179,13 +185,13 @@ with st.sidebar:
 if selected == "Mapa statyczna":
     st.header("Najbliższe szpitale od centrum danej gminy", divider='rainbow')
     st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
-    create_static_map()
+    st.pyplot(static)
 elif selected == "Mapa interaktywna":
     st.header("Interaktywna mapa najbliższych szpitali od centrum danej gminy", divider='rainbow')
     st.subheader("Najedź kursorem na wybraną gminę, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
-    m = create_interactive_map()
-    st_folium(m, width=800, height=600)
+    # m = create_interactive_map()
+    st_folium(interactive, width=800, height=600)
 elif selected == "Statystyki":
     st.header("Wybrane statystyki", divider='rainbow')
     # st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
-    create_statistics_plot()
+    st.pyplot(statistics)

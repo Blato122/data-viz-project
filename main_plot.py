@@ -11,8 +11,11 @@ import branca.colormap as cm # idk what's the difference tbh
 
 matrix_api_base_url = 'http://localhost:8080/ors/v2/matrix/driving-car'
 
+load_mun = False
+# omg ale syf, zmienić nazwę chociaż
+
 # Load the contours of Poland and its municipalities from a GeoJSON file
-municipalities = gpd.read_file("poland_municipalities.json")
+municipalities = gpd.read_file("poland_municipalities.json" if load_mun else "poland_counties.json")
 municipality_polygons = municipalities['geometry']
 municipality_centroids = municipality_polygons.to_crs('+proj=cea').centroid.to_crs(municipality_polygons.crs)
 municipality_coords = [[coords.x, coords.y] for coords in municipality_centroids]
@@ -67,13 +70,13 @@ municipality_dict = {tuple_coords(c, n) : n for c, n in zip(municipality_coords,
 # why do the coords have to be 'inverted'?!?
 # hospital_coords = [(loads(wkt_coords).x, loads(wkt_coords).y) for wkt_coords in hospitals['geometry']] # loads returns a Point object
 
-# Matrix API call - obtain travel durations between Sosnowiec and each of the hospitals - key can be omitted for local host
+# Matrix API call - key can be omitted for local host
 client = ors.Client(base_url='http://localhost:8080/ors')
 
 resume = True # SET TO TRUE AFTER LOADING NEW MAP DATA
 if resume:
     try:
-        with open('mun_hospital_times.pickle', 'rb') as handle:
+        with open('mun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'rb') as handle:
             mun_hospital_times = pickle.load(handle)
     except FileNotFoundError:
         print('File does not exist (yet)')
@@ -119,7 +122,7 @@ for j, (mun_coords, mun_name) in enumerate(municipality_dict.items()):
     
     # After loading a whole municipality, save the dict so that later this information doesn't have to be loaded again
     if j % 20 == 0 or j+1 == len(municipalities['name']):
-        with open('mun_hospital_times.pickle', 'wb') as handle:
+        with open('mun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'wb') as handle:
             print("saving")
             pickle.dump(mun_hospital_times, handle, protocol=pickle.HIGHEST_PROTOCOL) # może zapisywać co np. 10 gmin, bo zapisywanie też trochę zajmuje
 
