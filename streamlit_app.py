@@ -84,10 +84,10 @@ def create_statistics_plot():
 
     bottom_municipalities = [mun_name for (_, mun_name), _ in main_plot.min_times_sorted[-20:]]
     bottom_min_times_in_minutes = [time[1] for _, time in main_plot.min_times_sorted[-20:]]
-    bottom_hospital_names = [time[0] for _, time in main_plot.min_times_sorted[:20]]
+    bottom_hospital_names = [time[0] for _, time in main_plot.min_times_sorted[-20:]]
 
     subplot_num = 3
-    subplot_size = 12
+    subplot_size = 10
     fig, (ax1, ax2, ax3) = plt.subplots(subplot_num, 1, figsize=(subplot_size, subplot_num * subplot_size))
     bars1 = ax1.bar(top_municipalities, top_min_times_in_minutes, color='lightgreen')
 
