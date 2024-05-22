@@ -87,7 +87,8 @@ def create_statistics_plot():
     bottom_hospital_names = [time[0] for _, time in main_plot.min_times_sorted[:20]]
 
     subplot_num = 3
-    fig, (ax1, ax2, ax3) = plt.subplots(subplot_num, 1, figsize=(10, subplot_num * 10))
+    subplot_size = 12
+    fig, (ax1, ax2, ax3) = plt.subplots(subplot_num, 1, figsize=(subplot_size, subplot_num * subplot_size))
     bars1 = ax1.bar(top_municipalities, top_min_times_in_minutes, color='lightgreen')
 
     for bar, hospital_name in zip(bars1, top_hospital_names):
