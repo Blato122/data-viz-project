@@ -8,6 +8,7 @@ from streamlit_folium import st_folium
 from streamlit_option_menu import option_menu # pip install streamlit-option-menu
 
 import main_plot
+import main_plot2
 
 class StyleFunction: # wut
     def __init__(self, color):
@@ -173,25 +174,46 @@ def create_statistics_plot():
     # st.pyplot(fig)
     return fig
 
+# Create the maps beforehand (much faster than @st.cache_data...)
 static = create_static_map()
 interactive = create_interactive_map()
 statistics = create_statistics_plot()
 
 # Sidebar menu:
 with st.sidebar:
-    selected = option_menu(menu_title="Menu", options=["Mapa statyczna", 'Mapa interaktywna', "Statystyki"], 
-        icons=['house', 'gear', 'bi-bar-chart'], menu_icon="cast", default_index=0)
+    selected = option_menu(
+        menu_title="Menu", 
+        options=["Mapa statyczna - gminy", 'Mapa interaktywna - gminy', "Statystyki - gminy", 
+                "Mapa statyczna - powiaty", 'Mapa interaktywna - powiaty', "Statystyki - powiaty"], 
+        icons=['house', 'gear', 'bi-bar-chart']*2, 
+        menu_icon="bi-menu-button", 
+        default_index=0
+    )
 
-if selected == "Mapa statyczna":
+if selected == "Mapa statyczna - gminy":
     st.header("Najbliższe szpitale od centrum danej gminy", divider='rainbow')
     st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
     st.pyplot(static)
-elif selected == "Mapa interaktywna":
+elif selected == "Mapa interaktywna - gminy":
     st.header("Interaktywna mapa najbliższych szpitali od centrum danej gminy", divider='rainbow')
     st.subheader("Najedź kursorem na wybraną gminę, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
     # m = create_interactive_map()
     st_folium(interactive, width=800, height=600)
-elif selected == "Statystyki":
+elif selected == "Statystyki - gminy":
     st.header("Wybrane statystyki", divider='rainbow')
     # st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
+    st.pyplot(statistics)
+
+elif selected == "Mapa statyczna - powiaty":
+    st.header("Najbliższe szpitale od centrum danego powiatu", divider='rainbow')
+    st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
+    st.pyplot(static)
+elif selected == "Mapa interaktywna - powiaty":
+    st.header("Interaktywna mapa najbliższych szpitali od centrum danego powiatu", divider='rainbow')
+    st.subheader("Najedź kursorem na wybrany powiat, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
+    # m = create_interactive_map()
+    st_folium(interactive, width=800, height=600)
+elif selected == "Statystyki - powiaty":
+    st.header("Wybrane statystyki", divider='rainbow')
+    st.subheader("Mniej ciekawe, niż w przypadku gmin.")
     st.pyplot(statistics)
