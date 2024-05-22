@@ -107,6 +107,7 @@ else:
 #             'metrics': ['duration'],
 #         }
         
+        
 #         # Make the matrix api call
 #         matrix = client.distance_matrix(**params)
         
