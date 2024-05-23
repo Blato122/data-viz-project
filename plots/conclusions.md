@@ -36,4 +36,7 @@ również mogą mieć problem z szybkim dostaniem się do szpitala. Wpływać mo
 zaludnienia i mniej rozwinięta infrastruktura drogowa.
 
 Jeśli chodzi o obszary ze szczególnie dobrym dostępem do szpitali, są to oczywiście 
-okolice dużych miast: konurbacja górnośląska, miasta wojewódzkie, wybrane miasta powiatowe.
+okolice dużych miast i regiony gęsto zaludnione. Ewentualnie, mogą być to również mniejsze
+miejscowości, które skupiają wiele okolicznych wsi. Przykładami miejsc z dobrym dostępem do
+szpitali mogą być: konurbacja górnośląska, miasta wojewódzkie oraz wybrane miasta powiatowe 
+(np. Ełk i Biała Podlaska)

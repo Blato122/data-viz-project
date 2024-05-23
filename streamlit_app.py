@@ -11,9 +11,9 @@ with st.sidebar:
         options=["Mapa statyczna - gminy", 'Mapa interaktywna - gminy', "Statystyki - gminy", 
                 "Mapa statyczna - powiaty", 'Mapa interaktywna - powiaty', "Statystyki - powiaty",
                 "Wnioski"], 
-        icons=['house', 'gear', 'bi-bar-chart']*2 + ['bi-file-text'], 
+        icons=['house', 'gear', 'bi-bar-chart', 'house', 'gear', 'bi-bar-chart', 'bi-file-text'], 
         menu_icon="bi-menu-button", 
-        default_index=6
+        default_index=0
     )
 
 with open('plots/conclusions.md', 'r') as conclusions_file, \
@@ -23,7 +23,6 @@ with open('plots/conclusions.md', 'r') as conclusions_file, \
     conclusions = conclusions_file.read()
     interactive_mun = interactive_mun_file.read()
     interactive_cnt = interactive_cnt_file.read()
-
 
 # st.image() instead of st.pyplot() now!
 if selected == "Mapa statyczna - gminy":
