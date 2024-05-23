@@ -1,11 +1,11 @@
-**Gminy położone w górach:**
+**Gminy najdalej szpitali - położone w górach:**
 - Szczawnica: Pieniny i Beskid Sądecki, samo centrum
 - Lipnica Wielka: Beskidy, niedaleko u podnóży Babiej Góry
 - Cisna: Bieszczady, centrum
 - Komańcza: Bieszczady, obrzeża
 - Krempna: Beskid Niski, przy samym Magurskim Parku Narodowym
 
-**Gminy położone przy granicy:**
+**Gminy najdalej szpitali - położone przy granicy:**
 - Stubno: przy samej granicy z Ukrainą
 - Cedynia: przy samej granicy z Niemcami
 - Dołhobyczów: przy samej granicy z Ukrainą
@@ -17,7 +17,7 @@
 - Trzcińsko-Zdrój: niedaleko granicy z Niemcami
 - Wilczęta: woj. warmińsko-mazurskie, okolice Elbląga, niedaleko granicy z Rosją
 
-**Pozostałe gminy:**
+**Gminy najdalej szpitali - pozostałe:**
 - Baćkowice: niedaleko Świętokrzyskiego Parku Narodowego
 - Lelów: niedaleko Jury Krakowsko-Częstochowskiej
 - Czarnia: granica woj. mazowieckiego i woj. warmińsko-mazurskiego (granica województw)
