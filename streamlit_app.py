@@ -26,7 +26,7 @@ elif selected == "Mapa interaktywna - gminy":
     st.header("Interaktywna mapa najbliższych szpitali od centrum danej gminy", divider='rainbow')
     st.subheader("Najedź kursorem na wybraną gminę, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
     # st_folium('plots/interactive_mun.html', width=800, height=600)
-    components.html(interactive_mun.read())
+    components.html(interactive_mun.read(), width=800, height=600)
 elif selected == "Statystyki - gminy":
     st.header("Wybrane statystyki", divider='rainbow')
     # st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
@@ -40,7 +40,7 @@ elif selected == "Mapa interaktywna - powiaty":
     st.header("Interaktywna mapa najbliższych szpitali od centrum danego powiatu", divider='rainbow')
     st.subheader("Najedź kursorem na wybrany powiat, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
     # st_folium('plots/interactive_mun.html', width=800, height=600)
-    components.html(interactive_cnt.read())
+    components.html(interactive_cnt.read(), width=800, height=600)
 elif selected == "Statystyki - powiaty":
     st.header("Wybrane statystyki", divider='rainbow')
     st.subheader("Mniej ciekawe, niż w przypadku gmin.")
