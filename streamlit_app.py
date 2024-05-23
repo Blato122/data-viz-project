@@ -8,6 +8,7 @@ from streamlit_folium import st_folium
 from streamlit_option_menu import option_menu # pip install streamlit-option-menu
 
 import main_plot
+import main_plot2
 
 class StyleFunction: # wut
     def __init__(self, color):
@@ -17,7 +18,7 @@ class StyleFunction: # wut
         return {'fillColor': self.color, 'color': 'black', 'weight': 0.5, 'fillOpacity': 0.7}
 
 # @st.cache_data
-def create_interactive_map():
+def create_interactive_map(file):
     m = folium.Map( # unhardcodify!!!
         location=[52.0693, 19.4803], # piątek dodać
         zoom_start=6,  # center on Poland
@@ -25,25 +26,25 @@ def create_interactive_map():
         min_zoom=6     # Minimum zoom level to keep the focus on Poland
     )
 
-    for i, (mun_geometry, (c, n)) in enumerate(zip(main_plot.municipality_polygons, main_plot.municipality_dict.items())): # aah ok
-        color = main_plot.color_mapping_interactive[str((tuple(c), n))]
+    for i, (mun_geometry, (c, n)) in enumerate(zip(file.municipality_polygons, file.municipality_dict.items())): # aah ok
+        color = file.color_mapping_interactive[(tuple(c), n)]
         style_func = StyleFunction(color)
         folium.GeoJson(
             mun_geometry,
             style_function=style_func,
-            tooltip=folium.Tooltip(f"Gmina: {n}<br>Najbliższy szpital: {main_plot.min_times_dict[(tuple(c), n)][0]}<br>Czas dojazdu: {main_plot.min_times_dict[(tuple(c), n)][1]:.2f}")
+            tooltip=folium.Tooltip(f"Gmina: {n}<br>Najbliższy szpital: {file.min_times_dict[(tuple(c), n)][0]}<br>Czas dojazdu: {file.min_times_dict[(tuple(c), n)][1]:.2f}")
         ).add_to(m)
 
-    main_plot.colormap.caption = 'Czas jazdy samochodem od centrum gminy do najbliższego szpitala (w minutach)'
-    m.add_child(main_plot.colormap)
+    file.colormap.caption = 'Czas jazdy samochodem od centrum gminy do najbliższego szpitala (w minutach)'
+    m.add_child(file.colormap)
     return m
 
 # @st.cache_data # tutaj chyba lepiej trzymać jak najmniej rzeczy..?
-def create_static_map():
+def create_static_map(file):
     # Plot the contours (filled with color) and health facility locations
     fig, ax = plt.subplots(figsize=(10, 10))
-    main_plot.municipalities.plot(ax=ax, edgecolor='grey', facecolor=[main_plot.color_mapping[str((tuple(c), n))] for c, n in main_plot.municipality_dict.items()], linewidth=0.25)
-    main_plot.voivodeships.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=0.25) # color czy facecolor? + alpha?
+    file.municipalities.plot(ax=ax, edgecolor='grey', facecolor=[file.color_mapping[(tuple(c), n)] for c, n in file.municipality_dict.items()], linewidth=0.25)
+    file.voivodeships.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=0.25) # color czy facecolor? + alpha?
     # health_facilities[health_facilities['amenity'] == 'hospital'].plot(ax=ax, color='orange', markersize=10, label='Szpitale') # remove later? - some are points and some are exact polygons
 
     ax.set_title("Mapa Polski z województwami i gminami")
@@ -52,7 +53,7 @@ def create_static_map():
     # fig.legend()
 
     # Colormap legend as a bar - https://www.mimuw.edu.pl/~walen/vis/wybory2018/
-    sm = plt.cm.ScalarMappable(cmap=main_plot.cmap, norm=main_plot.norm)
+    sm = plt.cm.ScalarMappable(cmap=file.cmap, norm=file.norm)
     cbar = plt.colorbar(
         sm,
         shrink=0.66,
@@ -78,14 +79,14 @@ def create_static_map():
     # st.image('svg_plot.svg')
 
 # @st.cache_data
-def create_statistics_plot():
-    top_municipalities = [mun_name for (_, mun_name), _ in main_plot.min_times_sorted[:20]]
-    top_min_times_in_minutes = [time[1] for _, time in main_plot.min_times_sorted[:20]]
-    top_hospital_names = [time[0] for _, time in main_plot.min_times_sorted[:20]]
+def create_statistics_plot(file):
+    top_municipalities = [mun_name for (_, mun_name), _ in file.min_times_sorted[:20]]
+    top_min_times_in_minutes = [time[1] for _, time in file.min_times_sorted[:20]]
+    top_hospital_names = [time[0] for _, time in file.min_times_sorted[:20]]
 
-    bottom_municipalities = [mun_name for (_, mun_name), _ in main_plot.min_times_sorted[-20:]]
-    bottom_min_times_in_minutes = [time[1] for _, time in main_plot.min_times_sorted[-20:]]
-    bottom_hospital_names = [time[0] for _, time in main_plot.min_times_sorted[-20:]]
+    bottom_municipalities = [mun_name for (_, mun_name), _ in file.min_times_sorted[-20:]]
+    bottom_min_times_in_minutes = [time[1] for _, time in file.min_times_sorted[-20:]]
+    bottom_hospital_names = [time[0] for _, time in file.min_times_sorted[-20:]]
 
     subplot_num = 3
     subplot_size = 10
@@ -150,7 +151,7 @@ def create_statistics_plot():
     ax2.set_title("Centra gmin położone najdalej szpitali")
     ax2.tick_params(axis='x', rotation=90, labelsize=10)
 
-    top_20_most_often = {k: v for k, v in sorted(main_plot.hospital_counts.items(), key=lambda c: c[1], reverse=True)[:20]} # refactor!!!!!! teraz na szybko
+    top_20_most_often = {k: v for k, v in sorted(file.hospital_counts.items(), key=lambda c: c[1], reverse=True)[:20]} # refactor!!!!!! teraz na szybko
 
     bars3 = ax3.bar(range(len(top_20_most_often.keys())), top_20_most_often.values(), color='deepskyblue')
     # dlaczego w tym słowniku jako klucz jest po prostu nazwa szpitala? aha, jak się powtarzały, to dodawałem po prostu _n więc nie będzie błędów
@@ -173,9 +174,13 @@ def create_statistics_plot():
     # st.pyplot(fig)
     return fig
 
-static = create_static_map()
-interactive = create_interactive_map()
-statistics = create_statistics_plot()
+static = create_static_map(main_plot)
+interactive = create_interactive_map(main_plot)
+statistics = create_statistics_plot(main_plot)
+
+static2 = create_static_map(main_plot2)
+interactive2 = create_interactive_map(main_plot2)
+statistics2 = create_statistics_plot(main_plot2)
 
 # Sidebar menu:
 with st.sidebar:
@@ -202,16 +207,16 @@ elif selected == "Statystyki - gminy":
     # st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
     st.pyplot(statistics)
 
-# elif selected == "Mapa statyczna - powiaty":
-#     st.header("Najbliższe szpitale od centrum danego powiatu", divider='rainbow')
-#     st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
-#     st.pyplot(static2)
-# elif selected == "Mapa interaktywna - powiaty":
-#     st.header("Interaktywna mapa najbliższych szpitali od centrum danego powiatu", divider='rainbow')
-#     st.subheader("Najedź kursorem na wybrany powiat, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
-#     # m = create_interactive_map()
-#     st_folium(interactive2, width=800, height=600)
-# elif selected == "Statystyki - powiaty":
-#     st.header("Wybrane statystyki", divider='rainbow')
-#     st.subheader("Mniej ciekawe, niż w przypadku gmin.")
-#     st.pyplot(statistics2)
+elif selected == "Mapa statyczna - powiaty":
+    st.header("Najbliższe szpitale od centrum danego powiatu", divider='rainbow')
+    st.subheader("Kliknij przycisk w prawym górnym rogu, aby powiększyć mapę.")
+    st.pyplot(static2)
+elif selected == "Mapa interaktywna - powiaty":
+    st.header("Interaktywna mapa najbliższych szpitali od centrum danego powiatu", divider='rainbow')
+    st.subheader("Najedź kursorem na wybrany powiat, żeby zobaczyć dokładne statystyki. Możesz również przybliżać mapę.")
+    # m = create_interactive_map()
+    st_folium(interactive2, width=800, height=600)
+elif selected == "Statystyki - powiaty":
+    st.header("Wybrane statystyki", divider='rainbow')
+    st.subheader("Mniej ciekawe, niż w przypadku gmin.")
+    st.pyplot(statistics2)
