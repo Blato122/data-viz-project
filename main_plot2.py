@@ -14,7 +14,7 @@ matrix_api_base_url = 'http://localhost:8080/ors/v2/matrix/driving-car'
 load_mun = False # XD OMG ANTI-REFACTORING
 
 # Load the contours of Poland and its municipalities from a GeoJSON file
-municipalities = gpd.read_file("poland_municipalities.json" if load_mun else "poland_counties.json")
+municipalities = gpd.read_file("json_data/poland_municipalities.json" if load_mun else "json_data/poland_counties.json")
 municipality_polygons = municipalities['geometry']
 municipality_centroids = municipality_polygons.to_crs('+proj=cea').centroid.to_crs(municipality_polygons.crs)
 municipality_coords = [[coords.x, coords.y] for coords in municipality_centroids]
@@ -22,10 +22,10 @@ municipality_coords = [[coords.x, coords.y] for coords in municipality_centroids
 # health_facilities = gpd.read_file("poland_health_facilities_shp/poland.shp")
 
 # Extra - load voivodeships (for plotting only)
-voivodeships = gpd.read_file("poland_voivodeships.json")
+voivodeships = gpd.read_file("json_data/poland_voivodeships.json")
 
 # For some reason, the SHP file contains incomplete data about hospitals so I switched to GeoJSON (now 1043 hospitals instead of 138)
-health_facilities = gpd.read_file("poland_health_facilities.geojson")
+health_facilities = gpd.read_file("json_data/poland_health_facilities.geojson")
 hospitals = health_facilities[health_facilities['amenity'] == 'hospital'].copy() # what's that copy for? ah ok, so that the original doesn't get modified instead?
 hospitals.reset_index(drop=True, inplace=True) # reset so that the indices are contiunous again - because of removing pharmacies etc. there are gaps
 hospital_polygons = hospitals['geometry']
@@ -75,7 +75,7 @@ client = ors.Client(base_url='http://localhost:8080/ors')
 resume = True # SET TO TRUE AFTER LOADING NEW MAP DATA
 if resume:
     try:
-        with open('mun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'rb') as handle:
+        with open('saved_data/mun_hospital_times.pickle' if load_mun else 'saved_data/county_hospital_times.pickle', 'rb') as handle:
             mun_hospital_times = pickle.load(handle)
     except FileNotFoundError:
         print('File does not exist (yet)')
@@ -122,7 +122,7 @@ for j, (mun_coords, mun_name) in enumerate(municipality_dict.items()):
     
     # After loading a whole municipality, save the dict so that later this information doesn't have to be loaded again
     if j % 20 == 0 or j+1 == len(municipalities['name']):
-        with open('mun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'wb') as handle:
+        with open('saved_data/mun_hospital_times.pickle' if load_mun else 'saved_data/county_hospital_times.pickle', 'wb') as handle:
             print("saving")
             pickle.dump(mun_hospital_times, handle, protocol=pickle.HIGHEST_PROTOCOL) # może zapisywać co np. 10 gmin, bo zapisywanie też trochę zajmuje
 
