@@ -77,9 +77,6 @@ def tuple_coords(coords, name): # :((((((
 # print(list(tuple(municipality_coords[0]))) that's cool - it doesn't nest these
 municipality_dict = {tuple_coords(c, n) : n for c, n in zip(municipality_coords, municipalities['name'])} # https://stackoverflow.com/questions/16476924/how-can-i-iterate-over-rows-in-a-pandas-dataframe
 # hospital_list_t = list(zip(*zip(hospitals['name'], hospital_coords)))
-# maybe list better than a dict actually
-# theres no key but at least there is an ordering
-# ALE ZAMIESZANIE JUŻ Z TYMI DICT LIST I ZIP OMG POPRAWIĆ TO POTEM
 
 # why do the coords have to be 'inverted'?!?
 # hospital_coords = [(loads(wkt_coords).x, loads(wkt_coords).y) for wkt_coords in hospitals['geometry']] # loads returns a Point object
@@ -174,8 +171,8 @@ for (mun_coords, mun_name), times in mun_hospital_times.items():
     # print(mun_min)
     unzipped = list(zip(*times))
     # print( unzipped[0][ unzipped[1].index(min(unzipped[1])) ], min(unzipped[1]) ) # blah blah blah efficiency - gets the closest 
-    color_mapping[(mun_coords, mun_name)] = cmap(norm(mun_closest_hospital_minutes[1]))
-    color_mapping_interactive[(mun_coords, mun_name)] = colormap(mun_closest_hospital_minutes[1])
+    color_mapping[str((mun_coords, mun_name))] = cmap(norm(mun_closest_hospital_minutes[1]))
+    color_mapping_interactive[str((mun_coords, mun_name))] = colormap(mun_closest_hospital_minutes[1])
 
 # ================================================================================================== STATISTICS:
 

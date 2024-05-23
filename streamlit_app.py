@@ -26,7 +26,7 @@ def create_interactive_map():
     )
 
     for i, (mun_geometry, (c, n)) in enumerate(zip(main_plot.municipality_polygons, main_plot.municipality_dict.items())): # aah ok
-        color = main_plot.color_mapping_interactive[(tuple(c), n)]
+        color = main_plot.color_mapping_interactive[str((tuple(c), n))]
         style_func = StyleFunction(color)
         folium.GeoJson(
             mun_geometry,
@@ -42,7 +42,7 @@ def create_interactive_map():
 def create_static_map():
     # Plot the contours (filled with color) and health facility locations
     fig, ax = plt.subplots(figsize=(10, 10))
-    main_plot.municipalities.plot(ax=ax, edgecolor='grey', facecolor=[main_plot.color_mapping[(tuple(c), n)] for c, n in main_plot.municipality_dict.items()], linewidth=0.25)
+    main_plot.municipalities.plot(ax=ax, edgecolor='grey', facecolor=[main_plot.color_mapping[str((tuple(c), n))] for c, n in main_plot.municipality_dict.items()], linewidth=0.25)
     main_plot.voivodeships.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=0.25) # color czy facecolor? + alpha?
     # health_facilities[health_facilities['amenity'] == 'hospital'].plot(ax=ax, color='orange', markersize=10, label='Szpitale') # remove later? - some are points and some are exact polygons
 
