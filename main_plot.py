@@ -83,8 +83,8 @@ resume = True # SET TO TRUE AFTER LOADING NEW MAP DATA
 if resume:
     try:
         with open('Nmun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'rb') as handle:
-            mun_hospital_times = pickle.load(handle)
-            mun_hospital_times = convert_keys_back(mun_hospital_times)
+            mun_hospital_times_str_keys = pickle.load(handle)
+            mun_hospital_times = convert_keys_back(mun_hospital_times_str_keys)
     except FileNotFoundError:
         print('File does not exist (yet)')
         mun_hospital_times = {}

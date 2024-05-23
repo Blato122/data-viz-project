@@ -9,6 +9,8 @@ from streamlit_option_menu import option_menu # pip install streamlit-option-men
 
 import main_plot
 
+st.write(main_plot.mun_hospital_times)
+
 class StyleFunction: # wut
     def __init__(self, color):
         self.color = color
