@@ -167,8 +167,6 @@ def create_statistics_plot(file):
     # st.pyplot(fig)
     return fig
 
-# tylko te warunki w środku f-stringów trochę brzydkie
-
 import main_plot # xd ale czy to tak źle w sumie?
 static_mun = create_static_map(main_plot)
 interactive_mun = create_interactive_map(main_plot)

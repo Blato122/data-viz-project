@@ -13,7 +13,7 @@ with st.sidebar:
                 "Wnioski"], 
         icons=['house', 'gear', 'bi-bar-chart']*2 + ['bi-file-text'], 
         menu_icon="bi-menu-button", 
-        default_index=0
+        default_index=6
     )
 
 with open('plots/conclusions.md', 'r') as conclusions_file, \
