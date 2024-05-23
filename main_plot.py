@@ -7,6 +7,12 @@ import pickle # switch to json if the dict is to be readable
 import numpy as np
 import branca.colormap as cm # idk what's the difference tbh
 
+def convert_keys_to_strings(d):
+    return {str(k): v for k, v in d.items()}
+
+def convert_keys_back(d):
+    return {eval(k): v for k, v in d.items()}
+
 # ================================================================================================== SETUP:
 
 matrix_api_base_url = 'http://localhost:8080/ors/v2/matrix/driving-car'
@@ -76,8 +82,9 @@ client = ors.Client(base_url='http://localhost:8080/ors') # won't work on deploy
 resume = True # SET TO TRUE AFTER LOADING NEW MAP DATA
 if resume:
     try:
-        with open('mun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'rb') as handle:
+        with open('Nmun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'rb') as handle:
             mun_hospital_times = pickle.load(handle)
+            mun_hospital_times = convert_keys_back(mun_hospital_times)
     except FileNotFoundError:
         print('File does not exist (yet)')
         mun_hospital_times = {}
@@ -123,9 +130,10 @@ for j, (mun_coords, mun_name) in enumerate(municipality_dict.items()):
     
     # After loading a whole municipality, save the dict so that later this information doesn't have to be loaded again
     if j % 20 == 0 or j+1 == len(municipalities['name']):
-        with open('mun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'wb') as handle:
+        with open('Nmun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'wb') as handle:
             print("saving")
-            pickle.dump(mun_hospital_times, handle, protocol=pickle.HIGHEST_PROTOCOL) # może zapisywać co np. 10 gmin, bo zapisywanie też trochę zajmuje
+            mun_hospital_times_str_keys = convert_keys_to_strings(mun_hospital_times)
+            pickle.dump(mun_hospital_times_str_keys, handle, protocol=pickle.HIGHEST_PROTOCOL) # może zapisywać co np. 10 gmin, bo zapisywanie też trochę zajmuje
 
 # https://pl.wikipedia.org/wiki/Powiaty_i_gminy_o_identycznych_nazwach XD
 # duplicate_names = municipalities['name'][municipalities['name'].duplicated(keep=False)]
