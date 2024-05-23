@@ -9,8 +9,6 @@ from streamlit_option_menu import option_menu # pip install streamlit-option-men
 
 import main_plot
 
-st.write(main_plot.mun_hospital_times_str_keys)
-
 class StyleFunction: # wut
     def __init__(self, color):
         self.color = color
@@ -175,9 +173,6 @@ def create_statistics_plot():
     # st.pyplot(fig)
     return fig
 
-# Create the maps beforehand (much faster than @st.cache_data...)
-# BARDZO DŁUGO SIĘ PRZEZ TO ŁADUJE CHYBA!
-# DZIAŁA, ALE jak to wygląda... no cóż, musiało działać na szybko
 static = create_static_map()
 interactive = create_interactive_map()
 statistics = create_statistics_plot()

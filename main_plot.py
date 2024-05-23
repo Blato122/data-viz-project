@@ -11,7 +11,15 @@ def convert_keys_to_strings(d):
     return {str(k): v for k, v in d.items()}
 
 def convert_keys_back(d):
-    return {eval(k): v for k, v in d.items()}
+    new_dict = {}
+    for k, v in d.items():
+        try:
+            new_key = eval(k)
+            new_dict[new_key] = v
+        except Exception as e:
+            print(f"Error converting key: {k}")
+            print(f"Exception: {e}")
+    return new_dict
 
 # ================================================================================================== SETUP:
 
@@ -84,56 +92,57 @@ if resume:
     try:
         with open('Nmun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'rb') as handle:
             mun_hospital_times_str_keys = pickle.load(handle)
-            mun_hospital_times = convert_keys_back(mun_hospital_times_str_keys)
+            print(mun_hospital_times_str_keys)
+            mun_hospital_times = convert_keys_back(mun_hospital_times_str_keys) # tu jest problem dla deploya...
+            print(mun_hospital_times)
     except FileNotFoundError:
         print('File does not exist (yet)')
         mun_hospital_times = {}
 else:
     mun_hospital_times = {}
 
-# chunk_size = 10 # even a 100 is too much for a single call AND once (for Osjaków) it even failed with a chunk_size of 50!
-# num_chunks = math.ceil(len(hospital_coords) / chunk_size)
+chunk_size = 10 # even a 100 is too much for a single call AND once (for Osjaków) it even failed with a chunk_size of 50!
+num_chunks = math.ceil(len(hospital_coords) / chunk_size)
 
-# for j, (mun_coords, mun_name) in enumerate(municipality_dict.items()):
-#     print(mun_name, f"{j+1}/{len(municipalities['name'])}")
+for j, (mun_coords, mun_name) in enumerate(municipality_dict.items()):
+    print(mun_name, f"{j+1}/{len(municipalities['name'])}")
 
-#     if resume and (mun_coords, mun_name) in mun_hospital_times:
-#         print("already loaded")
-#         continue
+    if resume and (mun_coords, mun_name) in mun_hospital_times:
+        print("already loaded")
+        continue
 
-#     for i in range(num_chunks):
-#         start_idx = i*chunk_size
-#         end_idx = min((i+1)*chunk_size, len(hospital_coords))
+    for i in range(num_chunks):
+        start_idx = i*chunk_size
+        end_idx = min((i+1)*chunk_size, len(hospital_coords))
         
-#         chunk_hospital_coords, chunk_hospital_names = hospital_coords[start_idx:end_idx], hospitals['unique_name'][start_idx:end_idx] #hospital_list_t[start_idx:end_idx]
-#         locations = [list(mun_coords)] + chunk_hospital_coords # double list because the 1st one converts the tuple to a list and the second one nests it so that lists can be concatenated in the way this API wants it
+        chunk_hospital_coords, chunk_hospital_names = hospital_coords[start_idx:end_idx], hospitals['unique_name'][start_idx:end_idx] #hospital_list_t[start_idx:end_idx]
+        locations = [list(mun_coords)] + chunk_hospital_coords # double list because the 1st one converts the tuple to a list and the second one nests it so that lists can be concatenated in the way this API wants it
 
-#         params = {
-#             'locations': locations,
-#             'destinations': [0],
-#             'metrics': ['duration'],
-#         }
+        params = {
+            'locations': locations,
+            'destinations': [0],
+            'metrics': ['duration'],
+        }
         
-
-#         # Make the matrix api call
-#         matrix = client.distance_matrix(**params)
+        # Make the matrix api call
+        matrix = client.distance_matrix(**params)
         
-#         travel_times = matrix['durations'][1:] # ignore the first one since it's the time from X to X
-#         travel_times = [t for sublist in travel_times for t in sublist] # flatten the list
-#         # print(None in travel_times)
+        travel_times = matrix['durations'][1:] # ignore the first one since it's the time from X to X
+        travel_times = [t for sublist in travel_times for t in sublist] # flatten the list
+        # print(None in travel_times)
 
-#         # Pair each hospital with its travel times
-#         new_entries = list(zip(chunk_hospital_names, travel_times))
-#         existing_entries = mun_hospital_times.get((mun_coords, mun_name), [])
-#         existing_entries.extend(new_entries)
-#         mun_hospital_times[(mun_coords, mun_name)] = existing_entries
+        # Pair each hospital with its travel times
+        new_entries = list(zip(chunk_hospital_names, travel_times))
+        existing_entries = mun_hospital_times.get((mun_coords, mun_name), [])
+        existing_entries.extend(new_entries)
+        mun_hospital_times[(mun_coords, mun_name)] = existing_entries
     
-#     # After loading a whole municipality, save the dict so that later this information doesn't have to be loaded again
-#     if j % 20 == 0 or j+1 == len(municipalities['name']):
-#         with open('Nmun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'wb') as handle:
-#             print("saving")
-#             mun_hospital_times_str_keys = convert_keys_to_strings(mun_hospital_times)
-#             pickle.dump(mun_hospital_times_str_keys, handle, protocol=pickle.HIGHEST_PROTOCOL) # może zapisywać co np. 10 gmin, bo zapisywanie też trochę zajmuje
+    # After loading a whole municipality, save the dict so that later this information doesn't have to be loaded again
+    if j % 20 == 0 or j+1 == len(municipalities['name']):
+        with open('Nmun_hospital_times.pickle' if load_mun else 'county_hospital_times.pickle', 'wb') as handle:
+            print("saving")
+            mun_hospital_times_str_keys = convert_keys_to_strings(mun_hospital_times)
+            pickle.dump(mun_hospital_times_str_keys, handle, protocol=pickle.HIGHEST_PROTOCOL) # może zapisywać co np. 10 gmin, bo zapisywanie też trochę zajmuje
 
 # https://pl.wikipedia.org/wiki/Powiaty_i_gminy_o_identycznych_nazwach XD
 # duplicate_names = municipalities['name'][municipalities['name'].duplicated(keep=False)]
