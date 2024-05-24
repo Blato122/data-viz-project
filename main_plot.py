@@ -5,9 +5,9 @@ import openrouteservice as ors
 import math
 import pickle # switch to json if the dict is to be readable
 import numpy as np
-import branca.colormap as cm # idk what's the difference tbh
+import branca.colormap as cm # idk what's the difference
 
-# not needed anymore tbh
+# not needed anymore
 def convert_keys_to_strings(d):
     return {str(k): v for k, v in d.items()}
 
@@ -82,7 +82,7 @@ municipality_dict = {tuple_coords(c, n) : n for c, n in zip(municipality_coords,
 # why do the coords have to be 'inverted'?!?
 # hospital_coords = [(loads(wkt_coords).x, loads(wkt_coords).y) for wkt_coords in hospitals['geometry']] # loads returns a Point object
 
-# Matrix API call - key can be omitted for local host
+# Matrix API call - key can be omitted for localhost
 client = ors.Client(base_url='http://localhost:8080/ors') # won't work on deploy
 
 resume = True # SET TO TRUE AFTER LOADING NEW MAP DATA
